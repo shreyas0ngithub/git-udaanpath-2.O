@@ -1,0 +1,49 @@
+<!-- parent_dashboard.html -->
+{% extends 'authentication/base.html' %}
+
+{% block title %}Parent Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Parent Dashboard</h2>
+        <p><strong>Child:</strong> {{ child_name }}</p>
+        <p><strong>Class:</strong> {{ child_class }} {{ child_section }}</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Child Information</h5>
+                <p><strong>Name:</strong> {{ parent.child_name }}</p>
+                <p><strong>Class:</strong> {{ child_class }} {{ child_section }}</p>
+                <p><strong>DOB:</strong> {{ parent.child_dob|date:"d M Y" }}</p>
+                <p><strong>Status:</strong> 
+                    {% if parent.is_verified %}
+                        <span class="badge bg-success">Verified</span>
+                    {% else %}
+                        <span class="badge bg-warning">Pending Verification</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Performance Dashboard</h5>
+                {% if parent.is_verified %}
+                    <p>You can view your child's academic progress and performance metrics here.</p>
+                    <a href="{% url 'students:student_list' %}" class="btn btn-primary">View Reports</a>
+                    <a href="{% url 'students:student_dashboard' student_id %}" class="btn btn-info">View Student Dashboard</a>
+                {% else %}
+                    <p class="text-muted">Dashboard will be available after account verification.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

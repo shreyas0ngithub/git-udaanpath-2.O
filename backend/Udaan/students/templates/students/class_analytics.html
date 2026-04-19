@@ -1,0 +1,11 @@
+{% extends 'students/base2.html' %}
+
+{% block title %}Class Analytics - UdaanPath{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ class_obj }} - Analytics</h2>
+    <p class="text-muted">Class analytics coming soon!</p>
+    <a href="{% url 'students:dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+</div>
+{% endblock %}

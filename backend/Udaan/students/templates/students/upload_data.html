@@ -1,0 +1,169 @@
+<!-- students/templates/students/upload_data.html -->
+{% extends 'students/base2.html' %}
+{% load static %}
+
+{% block title %}Upload Student Data - UdaanPath{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="mb-4">Upload Student Data</h2>
+            
+            <!-- Instructions Card -->
+            <div class="card mb-4 border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">📋 Upload Instructions</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Excel File Formats Required:</h6>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="alert alert-light">
+                                <strong>1. Attendance File</strong>
+                                <p class="small mb-1">Columns: roll_number, date, status, remarks</p>
+                                <p class="small mb-0 text-muted">Status: Present, Absent, Late, Excused</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="alert alert-light">
+                                <strong>2. Academic File</strong>
+                                <p class="small mb-1">Columns: roll_number, subject_code, subject_name, exam_type, marks_obtained, max_marks, exam_date</p>
+                                <p class="small mb-0 text-muted">Exam types: ClassTest1, ClassTest2, MidTerm, EndTerm</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="alert alert-light">
+                                <strong>3. Non-Academic File</strong>
+                                <p class="small mb-1">Columns: roll_number, sports_participation, arts_creativity, leadership_skills, teamwork, communication_skills, discipline, punctuality, peer_relationships, assessment_period</p>
+                                <p class="small mb-0 text-muted">Ratings: Excellent, Good, Average, NeedsImprovement (or 1-10 for skills)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Upload Files</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.class_selection.id_for_label }}" class="form-label">
+                                {{ form.class_selection.label }}
+                            </label>
+                            {{ form.class_selection }}
+                            {% if form.class_selection.errors %}
+                                <div class="text-danger small">{{ form.class_selection.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.attendance_file.id_for_label }}" class="form-label">
+                                {{ form.attendance_file.label }}
+                            </label>
+                            {{ form.attendance_file }}
+                            <div class="form-text">{{ form.attendance_file.help_text }}</div>
+                            {% if form.attendance_file.errors %}
+                                <div class="text-danger small">{{ form.attendance_file.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.academic_file.id_for_label }}" class="form-label">
+                                {{ form.academic_file.label }}
+                            </label>
+                            {{ form.academic_file }}
+                            <div class="form-text">{{ form.academic_file.help_text }}</div>
+                            {% if form.academic_file.errors %}
+                                <div class="text-danger small">{{ form.academic_file.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.non_academic_file.id_for_label }}" class="form-label">
+                                {{ form.non_academic_file.label }}
+                            </label>
+                            {{ form.non_academic_file }}
+                            <div class="form-text">{{ form.non_academic_file.help_text }}</div>
+                            {% if form.non_academic_file.errors %}
+                                <div class="text-danger small">{{ form.non_academic_file.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                📤 Upload Data
+                            </button>
+                        </div>
+                        <div class="d-grid gap-2 mt-2">
+                            <a href="{% url 'students:student_list' %}" class="btn btn-secondary btn-lg">
+                                📚 View Student List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Uploads -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Recent Uploads</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_uploads %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>File Name</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Processed</th>
+                                        <th>Failed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for upload in recent_uploads %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-info">{{ upload.get_upload_type_display }}</span>
+                                        </td>
+                                        <td>{{ upload.file_name }}</td>
+                                        <td>{{ upload.uploaded_at|date:"d M Y, H:i" }}</td>
+                                        <td>
+                                            {% if upload.status == 'success' %}
+                                                <span class="badge bg-success">Success</span>
+                                            {% elif upload.status == 'partial' %}
+                                                <span class="badge bg-warning">Partial</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Failed</span>
+                                            {% endif %}
+                                        </td>
+                                        <td><span class="badge bg-primary">{{ upload.records_processed }}</span></td>
+                                        <td><span class="badge bg-danger">{{ upload.records_failed }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No uploads yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

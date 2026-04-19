@@ -1,0 +1,40 @@
+
+<!-- teacher_dashboard.html -->
+{% extends 'authentication/base.html' %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Welcome, {{ teacher.teacher_name }}</h2>
+        <p><strong>School:</strong> {{ teacher.school.school_name }}</p>
+        <p><strong>Class:</strong> {{ teacher.get_class_assigned_display }} {{ teacher.get_section_assigned_display }}</p>
+        <p><strong>Teacher ID:</strong> {{ teacher.teacher_id }}</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Teacher Information</h5>
+                <p><strong>Email:</strong> {{ teacher.user.email }}</p>
+                <p><strong>Mobile:</strong> {{ teacher.mobile_number }}</p>
+                <p><strong>Join Date:</strong> {{ teacher.created_at|date:"d M Y" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <p>Student management and performance tracking features will be available here.</p>
+                <button class="btn btn-primary" disabled>Manage Students</button>
+                <button class="btn btn-info" disabled>Performance Reports</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

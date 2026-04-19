@@ -1,0 +1,48 @@
+
+<!-- user_profile.html -->
+{% extends 'authentication/base.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3>User Profile</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
+                
+                {% if user.user_type == 'teacher' %}
+                    <hr>
+                    <h5>Teacher Details</h5>
+                    <p><strong>Name:</strong> {{ profile.teacher_name }}</p>
+                    <p><strong>School:</strong> {{ profile.school.school_name }}</p>
+                    <p><strong>Teacher ID:</strong> {{ profile.teacher_id }}</p>
+                    <p><strong>Class:</strong> {{ profile.get_class_assigned_display }} {{ profile.get_section_assigned_display }}</p>
+                    <p><strong>Mobile:</strong> {{ profile.mobile_number }}</p>
+                {% elif user.user_type == 'parent' %}
+                    <hr>
+                    <h5>Parent Details</h5>
+                    <p><strong>Child Name:</strong> {{ profile.child_name }}</p>
+                    <p><strong>Child Class:</strong> {{ profile.get_child_class_display }} {{ profile.get_child_section_display }}</p>
+                    <p><strong>Child DOB:</strong> {{ profile.child_dob|date:"d M Y" }}</p>
+                    <p><strong>Verification Status:</strong> 
+                        {% if profile.is_verified %}
+                            <span class="badge bg-success">Verified</span>
+                        {% else %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
+                
+                <div class="mt-3">
+                    <a href="{% url 'authentication:home' %}" class="btn btn-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %>

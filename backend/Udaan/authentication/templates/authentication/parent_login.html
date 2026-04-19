@@ -1,0 +1,168 @@
+{% extends 'authentication/base.html' %}
+
+{% block title %}Parent Login | UdaanPath{% endblock %}
+
+{% block content %}
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #001f3f, #004080, #007bff, #66b3ff);
+    background-size: 400% 400%;
+    animation: bgShift 15s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .login-card {
+    width: 400px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    padding: 40px 35px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    animation: floatCard 6s ease-in-out infinite;
+  }
+
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .login-card h3 {
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
+  }
+
+  label {
+    color: #fff;
+    text-align: left;
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.85);
+    margin-bottom: 15px;
+    transition: 0.3s;
+  }
+
+  input:focus {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px rgba(0, 64, 128, 0.3);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s ease;
+  }
+
+  .btn-info {
+    background: linear-gradient(45deg, #17a2b8, #00e6e6);
+    color: white;
+  }
+
+  .btn-info:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 0 25px rgba(23, 162, 184, 0.6);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 2px solid #fff;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-3px);
+  }
+
+  .text-danger {
+    font-size: 13px;
+    color: #ff4d4d;
+  }
+
+  .alert-danger {
+    background: rgba(255, 77, 77, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 77, 77, 0.4);
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .login-card {
+      width: 90%;
+      padding: 30px 25px;
+    }
+
+    h3 {
+      font-size: 22px;
+    }
+  }
+</style>
+
+<div class="login-card">
+  <h3>👨‍👩‍👧 Parent Login</h3>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3 text-start">
+      <label for="{{ form.username.id_for_label }}">Email</label>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <div class="text-danger">{{ form.username.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3 text-start">
+      <label for="{{ form.password.id_for_label }}">Password</label>
+      {{ form.password }}
+      {% if form.password.errors %}
+        <div class="text-danger">{{ form.password.errors }}</div>
+      {% endif %}
+    </div>
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-info">Login</button>
+    <a href="{% url 'authentication:home' %}" class="btn btn-secondary">Back</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,876 @@
+{% extends 'students/base2.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard - UdaanPath{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+    body {
+        font-family: "Poppins", sans-serif !important;
+        background: linear-gradient(-45deg, #001f3f, #004080, #007bff, #66b3ff);
+        background-size: 400% 400%;
+        animation: bgShift 15s ease infinite;
+        min-height: 100vh;
+    }
+
+    @keyframes bgShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .main-content {
+        background: transparent !important;
+    }
+
+    /* Animated Header */
+    .dashboard-header {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        animation: fadeDown 0.8s ease;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-header h1 {
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 800;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header .subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+    }
+
+    .student-badge {
+        display: inline-block;
+        background: linear-gradient(45deg, #00ffff, #00bfff);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        color: #001f3f;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 1.75rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        animation: floatCard 6s ease-in-out infinite;
+    }
+
+    @keyframes floatCard {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    .stat-card::before {
+        content: "";
+        position: absolute;
+        top: -60%;
+        left: -60%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent);
+        transform: rotate(25deg);
+        transition: 0.5s;
+    }
+
+    .stat-card:hover::before {
+        top: -20%;
+        left: -20%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        animation: iconPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .stat-icon.blue { background: linear-gradient(45deg, #007bff, #00bfff); }
+    .stat-icon.green { background: linear-gradient(45deg, #28a745, #4cd964); }
+    .stat-icon.orange { background: linear-gradient(45deg, #ff9500, #ffcc00); }
+    .stat-icon.purple { background: linear-gradient(45deg, #8b5cf6, #c084fc); }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .stat-trend {
+        margin-top: 0.75rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .trend-up {
+        background: rgba(76, 217, 100, 0.2);
+        color: #4cd964;
+    }
+
+    .trend-down {
+        background: rgba(255, 59, 48, 0.2);
+        color: #ff3b30;
+    }
+
+    /* Chart Cards */
+    .chart-card {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .chart-icon {
+        font-size: 1.5rem;
+        color: #00ffff;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 350px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        padding: 1rem;
+    }
+
+    /* Prediction Card */
+    .prediction-card {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(192, 132, 252, 0.2));
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 2px solid rgba(192, 132, 252, 0.3);
+        box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3);
+        margin-bottom: 2rem;
+    }
+
+    .prediction-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .prediction-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #8b5cf6, #c084fc);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .prediction-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .prediction-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .prediction-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .prediction-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .prediction-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .prediction-desc {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Progress Bars */
+    .progress-item {
+        margin-bottom: 1.5rem;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .progress-label {
+        color: white;
+        font-weight: 600;
+    }
+
+    .progress-value {
+        color: #00ffff;
+        font-weight: 700;
+    }
+
+    .progress-bar-container {
+        height: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ffff, #007bff);
+        border-radius: 10px;
+        transition: width 1s ease;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        animation: progressGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes progressGlow {
+        0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
+        50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+    }
+
+    /* Performance Badge */
+    .performance-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .badge-excellent { background: rgba(76, 217, 100, 0.3); color: #4cd964; }
+    .badge-good { background: rgba(0, 122, 255, 0.3); color: #00ffff; }
+    .badge-average { background: rgba(255, 149, 0, 0.3); color: #ffcc00; }
+    .badge-needs-improvement { background: rgba(255, 59, 48, 0.3); color: #ff3b30; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .chart-container {
+            height: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+    
+    <!-- ============= ADD THIS PARENT VIEW BANNER ============= -->
+    {% if is_parent_view %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert parent-view-banner" style="
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+                border: 1px solid rgba(102, 126, 234, 0.3);
+                border-radius: 15px;
+                color: white;
+                backdrop-filter: blur(10px);
+                padding: 20px;
+            ">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="mb-2 mb-md-0">
+                        <i class="fas fa-user-shield me-2" style="font-size: 1.2rem;"></i>
+                        <strong style="font-size: 1.1rem;">Parent View</strong>
+                        <span class="ms-2">Viewing {{ student.first_name }} {{ student.last_name }}'s Performance Dashboard</span>
+                    </div>
+                    <div>
+                        <a href="{% url 'parents:download_report' %}" class="btn btn-light btn-sm">
+                            <i class="fas fa-download me-2"></i>Download PDF Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+<div class="container-fluid">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <!-- Conditional Back Button -->
+    {% if is_teacher %}
+        <a href="{% url 'students:student_list' %}" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left"></i> Back to Student List
+        </a>
+    {% elif is_parent %}
+        <a href="{% url 'authentication:parent_dashboard' %}" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left"></i> Back to My Children
+        </a>
+    {% endif %}
+</div>
+
+        <h1>🎓 {{ student.first_name }} {{ student.last_name }}'s Performance Dashboard</h1>
+        <div class="subtitle">
+            <span class="student-badge">Roll No: {{ student.roll_number }}</span>
+            <span style="color: rgba(255,255,255,0.8); margin-left: 1rem;">{{ student.student_class }}</span>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">📊</div>
+            <div class="stat-value">{{ attendance_percentage|floatformat:1 }}%</div>
+            <div class="stat-label">Overall Attendance</div>
+            <div class="stat-trend trend-up">
+                <i class="fas fa-arrow-up"></i> +2.5% from last month
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">📚</div>
+            <div class="stat-value">85.2%</div>
+            <div class="stat-label">Academic Average</div>
+            <div class="stat-trend trend-up">
+                <i class="fas fa-arrow-up"></i> +5.3% improvement
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon orange">🎯</div>
+            <div class="stat-value">A+</div>
+            <div class="stat-label">Overall Grade</div>
+            <div class="stat-trend trend-up">
+                <i class="fas fa-star"></i> Excellent Performance
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">🏆</div>
+            <div class="stat-value">Top 10%</div>
+            <div class="stat-label">Class Rank</div>
+            <div class="stat-trend trend-up">
+                <i class="fas fa-medal"></i> Outstanding
+            </div>
+        </div>
+    </div>
+
+    <!-- Predictive Analysis -->
+    <div class="prediction-card">
+        <div class="prediction-header">
+            <div class="prediction-icon">🔮</div>
+            <div>
+                <div class="prediction-title">AI-Powered Predictions & Insights</div>
+                <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">Based on historical performance and trends</p>
+            </div>
+        </div>
+        <div class="prediction-content">
+            <div class="prediction-item">
+                <div class="prediction-label">Predicted End-Term Score</div>
+                <div class="prediction-value">88.5%</div>
+                <div class="prediction-desc">📈 +3.2% from current average</div>
+            </div>
+            <div class="prediction-item">
+                <div class="prediction-label">Success Probability</div>
+                <div class="prediction-value">94%</div>
+                <div class="prediction-desc">✅ High chance of excellent results</div>
+            </div>
+            <div class="prediction-item">
+                <div class="prediction-label">Recommended Focus</div>
+                <div class="prediction-value">Science</div>
+                <div class="prediction-desc">📖 Needs 15% improvement</div>
+            </div>
+            <div class="prediction-item">
+                <div class="prediction-label">Strength Area</div>
+                <div class="prediction-value">Math</div>
+                <div class="prediction-desc">⭐ Consistently excellent</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">📊 Academic Performance Trends</div>
+                    <span class="chart-icon"><i class="fas fa-chart-line"></i></span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">📈 Subject Scores</div>
+                    <span class="chart-icon"><i class="fas fa-chart-pie"></i></span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="subjectScoresChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">📅 Attendance Pattern</div>
+                    <span class="chart-icon"><i class="fas fa-calendar-check"></i></span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="attendancePatternChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">🎯 Skills Assessment Radar</div>
+                    <span class="chart-icon"><i class="fas fa-chart-area"></i></span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="skillsRadarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject-wise Progress -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <div class="chart-title">📚 Subject-wise Progress Tracking</div>
+            <span class="chart-icon"><i class="fas fa-tasks"></i></span>
+        </div>
+        <div class="progress-item">
+            <div class="progress-header">
+                <span class="progress-label">Mathematics</span>
+                <span class="progress-value">92%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 92%;"></div>
+            </div>
+        </div>
+        <div class="progress-item">
+            <div class="progress-header">
+                <span class="progress-label">Science</span>
+                <span class="progress-value">78%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 78%;"></div>
+            </div>
+        </div>
+        <div class="progress-item">
+            <div class="progress-header">
+                <span class="progress-label">English</span>
+                <span class="progress-value">88%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 88%;"></div>
+            </div>
+        </div>
+        <div class="progress-item">
+            <div class="progress-header">
+                <span class="progress-label">Social Studies</span>
+                <span class="progress-value">85%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 85%;"></div>
+            </div>
+        </div>
+        <div class="progress-item">
+            <div class="progress-header">
+                <span class="progress-label">Computer Science</span>
+                <span class="progress-value">90%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 90%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparative Analysis -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">📊 Performance vs Class Average</div>
+                    <span class="chart-icon"><i class="fas fa-chart-bar"></i></span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="comparativeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Growth Timeline -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <div class="chart-title">📈 Growth Timeline & Milestones</div>
+            <span class="chart-icon"><i class="fas fa-timeline"></i></span>
+        </div>
+        <div class="chart-container">
+            <canvas id="growthTimelineChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    const studentId = {{ student.id }};
+
+    // Chart.js Global Configuration
+    Chart.defaults.color = '#ffffff';
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+    Chart.defaults.font.size = 12;
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: { color: '#ffffff', font: { size: 12, weight: '600' } }
+            }
+        }
+    };
+
+    // 1. Performance Trend Chart (Line)
+    const ctx1 = document.getElementById('performanceTrendChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            datasets: [{
+                label: 'Student Performance',
+                data: [75, 78, 82, 80, 85, 87, 86, 88, 90],
+                borderColor: '#00ffff',
+                backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#00ffff'
+            }, {
+                label: 'Class Average',
+                data: [70, 72, 75, 74, 76, 78, 77, 79, 80],
+                borderColor: '#ff9500',
+                backgroundColor: 'rgba(255, 149, 0, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: '#ff9500'
+            }]
+        },
+        options: {
+            ...chartOptions,
+            scales: {
+                y: { 
+                    beginAtZero: false,
+                    min: 60,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+
+    // 2. Subject Scores (Doughnut)
+    const ctx2 = document.getElementById('subjectScoresChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['Math', 'Science', 'English', 'Social', 'CS'],
+            datasets: [{
+                data: [92, 78, 88, 85, 90],
+                backgroundColor: [
+                    '#00ffff',
+                    '#007bff',
+                    '#4cd964',
+                    '#ff9500',
+                    '#8b5cf6'
+                ],
+                borderWidth: 3,
+                borderColor: 'rgba(0, 0, 0, 0.3)'
+            }]
+        },
+        options: {
+            ...chartOptions,
+            cutout: '65%'
+        }
+    });
+
+    // 3. Attendance Pattern (Bar)
+    const ctx3 = document.getElementById('attendancePatternChart').getContext('2d');
+    new Chart(ctx3, {
+        type: 'bar',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Present',
+                data: [5, 5, 4, 5],
+                backgroundColor: '#4cd964'
+            }, {
+                label: 'Absent',
+                data: [0, 0, 1, 0],
+                backgroundColor: '#ff3b30'
+            }]
+        },
+        options: {
+            ...chartOptions,
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    max: 5,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+
+    // 4. Skills Radar
+    const ctx4 = document.getElementById('skillsRadarChart').getContext('2d');
+    new Chart(ctx4, {
+        type: 'radar',
+        data: {
+            labels: ['Leadership', 'Teamwork', 'Communication', 'Creativity', 'Critical Thinking'],
+            datasets: [{
+                label: 'Skills Level',
+                data: [8, 9, 7, 8, 9],
+                borderColor: '#00ffff',
+                backgroundColor: 'rgba(0, 255, 255, 0.2)',
+                borderWidth: 3,
+                pointBackgroundColor: '#00ffff',
+                pointRadius: 5
+            }]
+        },
+        options: {
+            ...chartOptions,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 10,
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                    angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                    ticks: { 
+                        color: '#ffffff',
+                        backdropColor: 'transparent'
+                    },
+                    pointLabels: { color: '#ffffff', font: { size: 11 } }
+                }
+            }
+        }
+    });
+
+    // 5. Comparative Chart
+    const ctx5 = document.getElementById('comparativeChart').getContext('2d');
+    new Chart(ctx5, {
+        type: 'bar',
+        data: {
+            labels: ['Math', 'Science', 'English', 'Social Studies', 'Computer Science'],
+            datasets: [{
+                label: 'Student Score',
+                data: [92, 78, 88, 85, 90],
+                backgroundColor: '#00ffff'
+            }, {
+                label: 'Class Average',
+                data: [80, 75, 82, 78, 85],
+                backgroundColor: '#007bff'
+            }]
+        },
+        options: {
+            ...chartOptions,
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+
+    // 6. Growth Timeline
+    const ctx6 = document.getElementById('growthTimelineChart').getContext('2d');
+    new Chart(ctx6, {
+        type: 'line',
+        data: {
+            labels: ['Term 1', 'Test 1', 'Mid Term', 'Test 2', 'Term 2', 'Final'],
+            datasets: [{
+                label: 'Academic Growth',
+                data: [75, 80, 82, 85, 87, 90],
+                borderColor: '#4cd964',
+                backgroundColor: 'rgba(76, 217, 100, 0.2)',
+                borderWidth: 4,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 6,
+                pointBackgroundColor: '#4cd964',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            ...chartOptions,
+            scales: {
+                y: { 
+                    beginAtZero: false,
+                    min: 70,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+
+    // Animation on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'fadeIn 0.6s ease forwards';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.chart-card, .prediction-card').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Add fadeIn keyframe
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

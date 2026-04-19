@@ -1,0 +1,354 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to UdaanPath</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Full Screen Video Intro Overlay */
+        .video-intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        /* Hide overlay when animation is done */
+        .video-intro-overlay.hidden {
+            animation: fadeOut 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.8));
+        }
+
+        /* Video Element - Full Screen */
+        .intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: videoZoomIn 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Alternative: Video centered with max size */
+        .intro-video.centered {
+            max-width: 80%;
+            max-height: 80%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 30px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes videoZoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Glow Effect Around Video */
+        .video-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: pulseGlow 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Welcome Text */
+        .welcome-text {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease 0.8s both;
+            z-index: 10;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        /* Loading Dots Animation */
+        .loading-dots {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            background: white;
+            border-radius: 50%;
+            animation: dotPulse 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes dotPulse {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Skip Button */
+        .skip-btn {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeInDown 1s ease 1s both;
+            z-index: 10;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skip-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5));
+            animation: progressFill 9s linear forwards;
+            z-index: 10;
+        }
+
+        @keyframes progressFill {
+            to { width: 100%; }
+        }
+
+        /* Main Content (Hidden Initially) */
+        .main-content {
+            display: none;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .main-content.show {
+            display: block;
+            animation: mainContentFadeIn 1s ease;
+        }
+
+        @keyframes mainContentFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Intro Overlay -->
+    <div class="video-intro-overlay" id="videoIntro">
+        <div class="video-container">
+            <!-- Glow Effect -->
+            <div class="video-glow"></div>
+            
+            <!-- YOUR VIDEO HERE - Replace 'your-video.mp4' with your actual video path -->
+            <video class="intro-video centered" id="introVideo" autoplay muted playsinline>
+                <source src="{% static 'videos/up_intro1.mp4' %}" type="video/mp4"> 
+                Your browser does not support the video tag.
+            </video>
+            
+            <!-- Welcome Text -->
+            <div class="welcome-text">
+                
+                <div class="welcome-subtitle">
+                    
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skip Button -->
+            <button class="skip-btn" onclick="skipIntro()">
+                Skip Intro <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <!-- Progress Bar -->
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content (Shows after video) 
+    <div class="main-content" id="mainContent">
+        <h1>Dashboard Content Goes Here</h1>
+        <p>This is where your actual dashboard will load after the intro video.</p>
+    </div> -->
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        const videoIntro = document.getElementById('videoIntro');
+        const introVideo = document.getElementById('introVideo');
+        const mainContent = document.getElementById('mainContent');
+
+        // Function to end intro and show main content
+        function endIntro() {
+            videoIntro.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            
+            // Show main content after fade out
+            setTimeout(() => {
+                videoIntro.style.display = 'none';
+                // mainContent.classList.add('show');
+                // Redirect to actual dashboard page (resolved server-side)
+                window.location.href = "{% url 'students:dashboard' %}";
+            }, 800);
+        }
+
+        // Skip intro button
+        function skipIntro() {
+            endIntro();
+        }
+
+        // Auto-end intro when video finishes
+        introVideo.addEventListener('ended', function() {
+            endIntro();
+        });
+
+        // Fallback: End intro after 5 seconds if video doesn't load
+        setTimeout(() => {
+            if (!videoIntro.classList.contains('hidden')) {
+                endIntro();
+            }
+        }, 10000);
+
+        // Optional: Store in session to show only once per login
+        // Check if intro was already shown
+        if (sessionStorage.getItem('introShown') === 'true') {
+            videoIntro.style.display = 'none';
+            mainContent.classList.add('show');
+            document.body.style.overflow = 'auto';
+        } else {
+            // Mark intro as shown
+            sessionStorage.setItem('introShown', 'true');
+        }
+    </script>
+</body>
+</html>

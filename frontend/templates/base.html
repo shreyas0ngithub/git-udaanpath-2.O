@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="UdaanPath - Comprehensive Student Performance Analytics Platform for K-12 Education">
+    <title>UdaanPath - Student Performance Analytics</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger: linear-gradient(135deg, #ff6a88 0%, #ff99ac 100%);
+            --info: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --dark: #1a1d2e;
+            --light-bg: #f8f9fe;
+            --sidebar-width: 280px;
+            --header-height: 75px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-bg);
+            color: #2d3748;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Floating Shapes Animation */
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.08;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            border-radius: 50%;
+            top: -150px;
+            right: -150px;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: var(--secondary);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            bottom: 10%;
+            left: 5%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+        
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: var(--success);
+            border-radius: 50%;
+            top: 50%;
+            right: 20%;
+            animation: float 18s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        /* Top Navigation Bar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+            z-index: 1030;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        
+        .logo-subtitle {
+            font-size: 0.7rem;
+            color: #718096;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .navbar-menu {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .search-box {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-box input {
+            width: 300px;
+            padding: 0.75rem 1.25rem 0.75rem 3rem;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            background: rgba(102, 126, 234, 0.08);
+            color: var(--dark);
+            font-size: 0.9rem;
+            transition: all 0.4s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            background: white;
+            border-color: var(--primary-solid);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+            width: 350px;
+        }
+        
+        .search-box input::placeholder {
+            color: #a0aec0;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-solid);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus + .search-icon {
+            color: var(--primary-solid);
+            animation: searchPulse 1s ease infinite;
+        }
+        
+        @keyframes searchPulse {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+        }
+        
+        .nav-icon-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .nav-icon-btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-icon-btn:hover i {
+            color: white;
+        }
+        
+        .nav-icon-btn i {
+            font-size: 1.1rem;
+            color: var(--primary-solid);
+            transition: all 0.3s ease;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: linear-gradient(135deg, #ff6a88 0%, #ff99ac 100%);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: notificationPulse 2s ease-in-out infinite;
+            box-shadow: 0 4px 12px rgba(255, 106, 136, 0.4);
+        }
+        
+        @keyframes notificationPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        
+        .user-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            background: rgba(102, 126, 234, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .user-profile-btn:hover {
+            background: white;
+            border-color: var(--primary-solid);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        }
+        
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .user-avatar::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .user-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            color: #718096;
+            font-weight: 500;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            box-shadow: 8px 0 32px rgba(102, 126, 234, 0.08);
+            overflow-y: auto;
+            z-index: 1020;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: slideInLeft 0.5s ease;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.4);
+        }
+        
+        .sidebar-menu {
+            padding: 2rem 0;
+        }
+        
+        .menu-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .menu-section-title {
+            padding: 0 1.75rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #a0aec0;
+            letter-spacing: 1.5px;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.75rem;
+            color: #4a5568;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0.25rem 1rem;
+            border-radius: 12px;
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+            transition: height 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            background: rgba(102, 126, 234, 0.08);
+            color: var(--primary-solid);
+            transform: translateX(8px);
+        }
+        
+        .menu-item:hover::before {
+            height: 60%;
+        }
+        
+        .menu-item.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+            transform: translateX(8px);
+        }
+        
+        .menu-item.active::before {
+            height: 0;
+        }
+        
+        .menu-item i {
+            font-size: 1.25rem;
+            width: 28px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover i {
+            transform: scale(1.15);
+        }
+        
+        .menu-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+        
+        .menu-item.active .menu-badge {
+            background: white;
+            color: var(--primary-solid);
+        }
+        
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 2.5rem;
+            min-height: calc(100vh - var(--header-height));
+            animation: fadeIn 0.6s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 0.05;
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+        
+        .trend-up {
+            background: rgba(74, 222, 128, 0.15);
+            color: #16a34a;
+        }
+        
+        .trend-down {
+            background: rgba(248, 113, 113, 0.15);
+            color: #dc2626;
+        }
+        
+        /* Cards */
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.08);
+            margin-bottom: 1.5rem;
+            transition: all 0.4s ease;
+        }
+        
+        .content-card:hover {
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Buttons */
+        .btn-gradient {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-gradient:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary-solid);
+            cursor: pointer;
+            margin-right: 1rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.08);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Loading Animation */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top-color: var(--primary-solid);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-overlay" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="mobile-menu-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <a href="#" class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="logo-text">
+                <span class="logo-title">UdaanPath</span>
+                <span class="logo-subtitle">Analytics</span>
+            </div>
+        </a>
+        
+        <div class="navbar-menu">
+            <div class="search-box">
+                <input type="text" placeholder="Search students, classes, reports..." id="globalSearch">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <button class="nav-icon-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </button>
+            
+            <button class="nav-icon-btn">
+                <i class="fas fa-envelope"></i>
+                <span class="notification-badge">2</span>
+            </button>
+            
+            <div class="user-profile-btn">
+                <div class="user-avatar">RK</div>
+                <div class="user-info">
+                    <div class="user-name">Rajesh Kumar</div>
+                    <div class="user-role">Teacher</div>
+                </div>
+                <i class="fas fa-chevron-down" style="color: #a0aec0; font-size: 0.8rem;"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <!-- Main Menu -->
+            <div class="menu-section" data-aos="fade-right" data-aos-delay="100">
+                <div class="menu-section-title">Main Menu</div>
+                <a href="#" class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Students</span>
+                    <span class="menu-badge">245</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-file-upload"></i>
+                    <span>Upload Data</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Classes</span>
+                    <span class="menu-badge">12</span>
+                </a>
+            </div>
+            
+            <!-- Analytics -->
+            <div class="menu-section" data-aos="fade-right" data-aos-delay="200">
+                <div class="menu-section-title">Analytics</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Performance Reports</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Attendance Analytics</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Class Comparison</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Leaderboard</span>
+                </a>
+            </div>
+            
+            <!-- Management -->
+            <div class="menu-section" data-aos="fade-right" data-aos-delay="300">
+                <div class="menu-section-title">Management</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-book"></i>
+                    <span>Subjects</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Academic Calendar</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Exam Schedule</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                    <span class="menu-badge">New</span>
+                </a>
+            </div>
+            
+            <!-- Settings -->
+            <div class="menu-section" data-aos="fade-right" data-aos-delay="400">
+                <div class="menu-section-title">Settings</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Profile Settings</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Privacy & Security</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help & Support</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">1,248</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12% this month</span>
+                </div>
+            </div>
+            
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">94.5%</div>
+                        <div class="stat-label">Avg Attendance</div>
+                    </div>
+                    <div class="stat-icon" style="background: var(--success);">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>3.2% increase</span>
+                </div>
+            </div>
+            
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">87.2%</div>
+                        <div class="stat-label">Avg Performance</div>
+                    </div>
+                    <div class="stat-icon" style="background: var(--warning);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>5.8% improvement</span>
+                </div>
+            </div>
+            
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">42</div>
+                        <div class="stat-label">Active Classes</div>
+                    </div>
+                    <div class="stat-icon" style="background: var(--secondary);">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>2 new classes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Cards -->
+        <div class="content-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="card-header">
+                <h2 class="card-title">Recent Activity</h2>
+                <button class="btn-gradient">
+                    <i class="fas fa-plus me-2"></i>
+                    <span style="position: relative; z-index: 1;">Add New</span>
+                </button>
+            </div>
+            <p style="color: #718096; font-size: 0.95rem;">
+                Track and manage your students' performance in real-time with powerful analytics and insights.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="content-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="card-header">
+                        <h2 class="card-title">Performance Overview</h2>
+                        <select class="form-select" style="width: auto; border-radius: 10px; border: 2px solid rgba(102, 126, 234, 0.2);">
+                            <option>This Month</option>
+                            <option>Last Month</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+                    <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: #a0aec0; font-size: 1.1rem;">
+                        <i class="fas fa-chart-area me-2" style="font-size: 2rem;"></i>
+                        <span>Chart will be displayed here</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="content-card" data-aos="fade-up" data-aos-delay="700">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button class="btn-gradient" style="width: 100%;">
+                            <i class="fas fa-file-upload me-2"></i>
+                            <span style="position: relative; z-index: 1;">Upload Data</span>
+                        </button>
+                        <button class="btn-gradient" style="width: 100%; background: var(--success);">
+                            <i class="fas fa-download me-2"></i>
+                            <span style="position: relative; z-index: 1;">Export Report</span>
+                        </button>
+                        <button class="btn-gradient" style="width: 100%; background: var(--warning);">
+                            <i class="fas fa-users me-2"></i>
+                            <span style="position: relative; z-index: 1;">View Students</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Students Table -->
+        <div class="content-card" data-aos="fade-up" data-aos-delay="800">
+            <div class="card-header">
+                <h2 class="card-title">Recent Students</h2>
+                <a href="#" style="color: var(--primary-solid); text-decoration: none; font-weight: 600;">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table" style="border-collapse: separate; border-spacing: 0 8px;">
+                    <thead>
+                        <tr style="background: transparent;">
+                            <th style="border: none; color: #a0aec0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 1rem;">Student</th>
+                            <th style="border: none; color: #a0aec0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 1rem;">Roll No</th>
+                            <th style="border: none; color: #a0aec0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 1rem;">Class</th>
+                            <th style="border: none; color: #a0aec0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 1rem;">Attendance</th>
+                            <th style="border: none; color: #a0aec0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 1rem;">Performance</th>
+                            <th style="border: none; color: #a0aec0; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; padding: 1rem;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.3s ease;">
+                            <td style="border: none; padding: 1rem; border-radius: 12px 0 0 12px;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">AS</div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #2d3748;">Aarav Sharma</div>
+                                        <div style="font-size: 0.8rem; color: #a0aec0;">aarav@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="border: none; padding: 1rem; font-weight: 600; color: #4a5568;">2024001</td>
+                            <td style="border: none; padding: 1rem;">
+                                <span style="background: rgba(102, 126, 234, 0.1); color: var(--primary-solid); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">10th A</span>
+                            </td>
+                            <td style="border: none; padding: 1rem;">
+                                <span style="background: rgba(74, 222, 128, 0.15); color: #16a34a; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">96%</span>
+                            </td>
+                            <td style="border: none; padding: 1rem;">
+                                <span style="background: rgba(74, 222, 128, 0.15); color: #16a34a; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">A+</span>
+                            </td>
+                            <td style="border: none; padding: 1rem; border-radius: 0 12px 12px 0;">
+                                <button style="background: rgba(102, 126, 234, 0.1); color: var(--primary-solid); border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                                    View Details
+                                </button>
+                            </td>
+                        </tr>
+                        <tr style="background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.3s ease;">
+                            <td style="border: none; padding: 1rem; border-radius: 12px 0 0 12px;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--secondary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">DV</div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #2d3748;">Diya Verma</div>
+                                        <div style="font-size: 0.8rem; color: #a0aec0;">diya@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="border: none; padding: 1rem; font-weight: 600; color: #4a5568;">2024004</td>
+                            <td style="border: none; padding: 1rem;">
+                                <span style="background: rgba(102, 126, 234, 0.1); color: var(--primary-solid); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">10th A</span>
+                            </td>
+                            <td style="border: none; padding: 1rem;">
+                                <span style="background: rgba(74, 222, 128, 0.15); color: #16a34a; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">94%</span>
+                            </td>
+                            <td style="border: none; padding: 1rem;">
+                                <span style="background: rgba(74, 222, 128, 0.15); color: #16a34a; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">A</span>
+                            </td>
+                            <td style="border: none; padding: 1rem; border-radius: 0 12px 12px 0;">
+                                <button style="background: rgba(102, 126, 234, 0.1); color: var(--primary-solid); border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                                    View Details
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            mirror: false
+        });
+        
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                    sidebar.classList.remove('show');
+                }
+            }
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add hover effect to table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.01)';
+                this.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.15)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
+            });
+        });
+        
+        // Loading animation
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+        
+        // Simulate loading on page load
+        window.addEventListener('load', function() {
+            setTimeout(hideLoading, 800);
+        });
+        
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn-gradient').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        
+        // Search functionality with animation
+        const searchInput = document.getElementById('globalSearch');
+        if (searchInput) {
+            searchInput.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        }
+        
+        // Active menu item animation
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Notification animation
+        const notificationBadges = document.querySelectorAll('.notification-badge');
+        notificationBadges.forEach(badge => {
+            setInterval(() => {
+                badge.style.animation = 'none';
+                setTimeout(() => {
+                    badge.style.animation = 'notificationPulse 2s ease-in-out infinite';
+                }, 10);
+            }, 3000);
+        });
+        
+        // Add parallax effect to floating shapes
+        document.addEventListener('mousemove', function(e) {
+            const shapes = document.querySelectorAll('.shape');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 10;
+                const x = (mouseX * speed) - (speed / 2);
+                const y = (mouseY * speed) - (speed / 2);
+                
+                shape.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
