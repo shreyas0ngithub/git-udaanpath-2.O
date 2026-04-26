@@ -167,6 +167,7 @@ class NonAcademicPerformance(models.Model):
 
 
 class DataUploadLog(models.Model):
+
     """Track all data uploads"""
     upload_type = models.CharField(max_length=20, choices=[
         ('attendance', 'Attendance'),
@@ -187,3 +188,17 @@ class DataUploadLog(models.Model):
     
     def __str__(self):
         return f"{self.upload_type} - {self.uploaded_at} - {self.status}"
+    
+class StudyPlan(models.Model):
+    """Stores AI-generated study plans for students"""
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='study_plans')
+    generated_date = models.DateTimeField(auto_now_add=True)
+    focus_subject = models.CharField(max_length=100)
+    plan_content = models.TextField(help_text="HTML formatted study plan from the LLM")
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['-generated_date']
+    
+    def __str__(self):
+        return f"Study Plan for {self.student.roll_number} - {self.generated_date.strftime('%Y-%m-%d')}"

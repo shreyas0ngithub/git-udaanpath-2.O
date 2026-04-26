@@ -181,6 +181,7 @@ def parent_dashboard(request):
 
     context = {
         'parent': parent,
+        'student': student,
         'student_id' : student_id,
         'child_name': parent.child_name,
         'child_class': parent.get_child_class_display(),

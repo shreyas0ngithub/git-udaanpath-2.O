@@ -6,5 +6,7 @@ from . import views
 app_name = "parents"
 
 urlpatterns = [
-    # path('intro/', views.welcome_intro, name='welcome_intro'),
+
+    path('api/student/<int:student_id>/generate-study-plan/', views.generate_study_plan_api, name='generate_study_plan')
+
 ]

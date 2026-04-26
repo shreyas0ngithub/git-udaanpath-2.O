@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Admin Dashboard | Udaan</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-bg: #222e3c;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+            background-color: var(--primary-color);
+            background-image: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+            background-size: cover;
+            transition: all 0.3s;
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+
+        #sidebar .nav-link:hover, #sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #fff;
+        }
+
+        #sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Topbar Styling */
+        .topbar {
+            height: 70px;
+            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+            background-color: #fff;
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .border-left-primary { border-left: 0.25rem solid var(--primary-color); }
+        .border-left-success { border-left: 0.25rem solid var(--success-color); }
+        .border-left-info { border-left: 0.25rem solid var(--info-color); }
+        .border-left-warning { border-left: 0.25rem solid var(--warning-color); }
+
+        .text-xs { font-size: .7rem; }
+        .font-weight-bold { font-weight: 700; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    </style>
+</head>
+<body>
+
+<div class="d-flex" id="wrapper">
+    <nav id="sidebar" class="text-white">
+        <div class="sidebar-heading text-center py-4 fs-4 fw-bold text-uppercase border-bottom border-light border-opacity-25">
+            <i class="fas fa-paper-plane me-2"></i>Udaan
+        </div>
+        <div class="list-group list-group-flush my-3">
+            <a href="#" class="list-group-item list-group-item-action bg-transparent nav-link active">
+                <i class="fas fa-tachometer-alt"></i>Dashboard
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bg-transparent nav-link">
+                <i class="fas fa-chalkboard-teacher"></i>Teachers
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bg-transparent nav-link">
+                <i class="fas fa-user-graduate"></i>Students
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bg-transparent nav-link">
+                <i class="fas fa-chart-line"></i>Analytics
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bg-transparent nav-link">
+                <i class="fas fa-cog"></i>Settings
+            </a>
+        </div>
+    </nav>
+
+    <div id="page-content-wrapper" class="w-100">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white topbar mb-4 static-top px-4">
+            <button class="btn btn-link d-md-none rounded-circle me-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <h5 class="mb-0 text-gray-800 fw-bold">School Administration</h5>
+            
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item dropdown no-arrow mx-1">
+                    <a class="nav-link text-gray-400" href="#"><i class="fas fa-bell fa-fw"></i></a>
+                </li>
+                <div class="topbar-divider d-none d-sm-block mx-3 border-end" style="height: 30px;"></div>
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <span class="me-2 d-none d-lg-inline text-gray-600 small fw-bold">Admin User</span>
+                        <img class="img-profile rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" src="https://ui-avatars.com/api/?name=Admin+User&background=4e73df&color=fff" style="width: 32px; height: 32px;">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="container-fluid px-4 pb-4">
+            
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-primary h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Enrolled</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">1,245</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300" style="color: #dddfeb;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-success h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Active Faculty</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">86</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-chalkboard-teacher fa-2x" style="color: #dddfeb;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-info h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">School Attendance</div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto">
+                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">92%</div>
+                                        </div>
+                                        <div class="col px-3">
+                                            <div class="progress progress-sm mr-2" style="height: 8px;">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: 92%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar-check fa-2x" style="color: #dddfeb;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card stat-card border-left-warning h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Action Required</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-exclamation-triangle fa-2x" style="color: #dddfeb;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-7 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-white d-flex flex-row align-items-center justify-content-between py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chart-bar me-2"></i>Teacher Data Upload Workload</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area" style="height: 300px;">
+                                <canvas id="workloadChart"></canvas>
+                            </div>
+                            <hr>
+                            <p class="mb-0 small text-muted">Tracking the volume of Academic and Attendance data uploads by faculty members to ensure system compliance.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-white d-flex flex-row align-items-center justify-content-between py-3 border-bottom-0 pb-0">
+                            <h6 class="m-0 font-weight-bold text-success"><i class="fas fa-balance-scale me-2"></i>Smart Section Balancer</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-4">Select a grade to run the AI balancer and get section reallocation suggestions based on academic and behavioral metrics.</p>
+                            
+                            <div class="input-group mb-4 shadow-sm">
+                                <span class="input-group-text bg-light border-end-0">Grade Level</span>
+                                <input type="number" id="gradeInput" class="form-control border-start-0 ps-0" min="1" max="12" value="10">
+                                <button class="btn btn-success px-4" id="runBalancerBtn">
+                                    <i class="fas fa-bolt me-1"></i> Analyze
+                                </button>
+                            </div>
+
+                            <div id="balancerResults" class="p-3 bg-light rounded border border-light">
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-robot fa-3x mb-3 opacity-25"></i>
+                                    <p class="mb-0">Awaiting input to generate balancing strategies.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Initialize dummy data for the Teacher Workload Chart to make the template look good instantly
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('workloadChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Sharma, R.', 'Patil, K.', 'Deshmukh, A.', 'Joshi, S.', 'Kulkarni, M.'],
+                datasets: [
+                    {
+                        label: 'Academic Uploads',
+                        data: [45, 30, 60, 25, 50],
+                        backgroundColor: '#4e73df',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Attendance Uploads',
+                        data: [120, 100, 130, 90, 115],
+                        backgroundColor: '#1cc88a',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { stacked: true, beginAtZero: true, grid: { borderDash: [2, 4], color: '#eaecf4' } },
+                    x: { stacked: true, grid: { display: false } }
+                }
+            }
+        });
+
+        // Mock interaction for the Smart Balancer button
+        document.getElementById('runBalancerBtn').addEventListener('click', function() {
+            const btn = this;
+            const results = document.getElementById('balancerResults');
+            
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            btn.disabled = true;
+            
+            // Simulate API delay
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check me-1"></i> Complete';
+                btn.classList.replace('btn-success', 'btn-primary');
+                
+                results.innerHTML = `
+                    <h6 class="fw-bold mb-3">Recommended Actions</h6>
+                    <div class="card border-left-warning mb-2 shadow-sm">
+                        <div class="card-body p-2">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong>Student: Aryan M.</strong>
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            </div>
+                            <div class="small">
+                                Move from <span class="text-danger fw-bold">10-A</span> <i class="fas fa-arrow-right mx-1"></i> <span class="text-success fw-bold">10-C</span>
+                            </div>
+                            <p class="small text-muted mt-2 mb-0 border-top pt-2">Reason: Balances the high academic average of 10-A and raises the peer baseline in 10-C.</p>
+                        </div>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-bolt me-1"></i> Analyze';
+                    btn.classList.replace('btn-primary', 'btn-success');
+                    btn.disabled = false;
+                }, 2000);
+            }, 1200);
+        });
+    });
+</script>
+</body>
+</html>
