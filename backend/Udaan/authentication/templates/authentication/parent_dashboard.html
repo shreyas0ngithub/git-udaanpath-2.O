@@ -73,6 +73,50 @@
         </div>
     </div>
 
+    <!-- AI Career Pathfinder -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-start border-4 border-success">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h6 class="m-0 font-weight-bold text-success"><i class="fas fa-compass me-2"></i>AI Career Pathfinder</h6>
+                <!-- The Foolproof Form Approach -->
+<form action="{% url 'parents:generate_career' student.id %}" method="POST" class="m-0 p-0">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-success shadow-sm" onclick="this.innerHTML='<i class=\'fas fa-spinner fa-spin me-1\'></i> Analyzing...';">
+        <i class="fas fa-lightbulb me-1"></i> Discover Paths
+    </button>
+</form>
+            </div>
+            <div class="card-body bg-light">
+                <div id="careerLoader" class="text-center d-none py-5">
+                    <div class="spinner-border text-success mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <h5 class="text-success">Analyzing Potential...</h5>
+                    <p class="text-muted small">Mapping academic strengths and soft skills to future careers.</p>
+                </div>
+                
+                <div id="careerContent">
+                    {% with active_rec=student.career_recommendations.first %}
+                        {% if active_rec and active_rec.is_active %}
+                            <div class="d-flex justify-content-end mb-3 border-bottom pb-2">
+                                <small class="text-muted fw-bold">Last Updated: {{ active_rec.generated_date|date:"M d, Y" }}</small>
+                            </div>
+                            <div class="p-3 bg-white rounded shadow-sm border">
+                                {{ active_rec.recommendation_html|safe }}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-road fa-3x mb-3 opacity-25"></i>
+                                <h6 class="fw-bold">No Career Insights Yet</h6>
+                                <p class="small mb-0">Click "Discover Paths" to see where your strengths can take you.</p>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="row">
         <div class="col-12 mb-2">
             <h6 class="text-uppercase text-muted fw-bold small"><i class="fas fa-medal text-warning me-1"></i> Recent Achievements</h6>
@@ -141,27 +185,23 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    const generateBtn = document.getElementById('generatePlanBtn');
-    if(generateBtn) {
-        // Pass 'e' to the function
-        generateBtn.addEventListener('click', function(e) {
-            
-            // 1. STOP THE BROWSER FROM REDIRECTING
+    // ==========================================
+    // 1. AI Study Plan Generator
+    // ==========================================
+    const generatePlanBtn = document.getElementById('generatePlanBtn');
+    if(generatePlanBtn) {
+        generatePlanBtn.addEventListener('click', function(e) {
             e.preventDefault(); 
             
-            // 2. GET THE FULL URL FROM THE BUTTON
             const targetUrl = this.getAttribute('data-url');
-            
             const loader = document.getElementById('studyPlanLoader');
             const contentDiv = document.getElementById('studyPlanContent');
             
-            // 3. TRIGGER LOADING STATE
             this.disabled = true;
             this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generating...';
             contentDiv.classList.add('d-none');
             loader.classList.remove('d-none');
             
-            // 4. FIRE THE API CALL
             fetch(targetUrl, {
                 method: 'POST',
                 headers: {
@@ -169,41 +209,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(async response => {
+                const isJson = response.headers.get('content-type')?.includes('application/json');
+                const data = isJson ? await response.json() : null;
+                if (!response.ok) return Promise.reject(data?.error || `Server Error: ${response.status}`);
+                return data;
+            })
             .then(data => {
                 loader.classList.add('d-none');
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fas fa-magic me-1"></i> Generate New Plan';
+                generatePlanBtn.disabled = false;
+                generatePlanBtn.innerHTML = '<i class="fas fa-magic me-1"></i> Generate New Plan';
                 
-                if (data.status === 'success') {
+                if (data && data.status === 'success') {
                     contentDiv.innerHTML = `
                         <div class="alert alert-success py-2 small mb-3">
-                            <i class="fas fa-check-circle me-1"></i> Plan successfully tailored for ${data.focus_subject}!
+                            <i class="fas fa-check-circle me-1"></i> Plan tailored for ${data.focus_subject}!
                         </div>
                         <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
                             <h5><span class="badge bg-danger px-3 py-2">Focus Area: ${data.focus_subject}</span></h5>
                             <small class="text-muted fw-bold mt-1">Generated: ${data.generated_date}</small>
                         </div>
-                        <div class="p-3 bg-white rounded shadow-sm border">
-                            ${data.plan_html}
-                        </div>
+                        <div class="p-3 bg-white rounded shadow-sm border">${data.plan_html}</div>
                     `;
-                    contentDiv.classList.remove('d-none');
-                } else {
-                    contentDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>${data.error}</div>`;
                     contentDiv.classList.remove('d-none');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
                 loader.classList.add('d-none');
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fas fa-magic me-1"></i> Generate New Plan';
-                contentDiv.innerHTML = `<div class="alert alert-danger">Failed to connect to the AI engine.</div>`;
+                generatePlanBtn.disabled = false;
+                generatePlanBtn.innerHTML = '<i class="fas fa-magic me-1"></i> Generate New Plan';
+                contentDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i> ${error}</div>`;
                 contentDiv.classList.remove('d-none');
             });
         });
     }
+
+    
 });
 </script>
 {% endblock %}

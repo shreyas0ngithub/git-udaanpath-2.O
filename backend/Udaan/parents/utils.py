@@ -2,11 +2,12 @@ import os
 import environ
 import google.generativeai as genai
 from students.models import StudyPlan, NonAcademicPerformance
+from students.models import CareerRecommendation
 
 env = environ.Env()
 environ.Env.read_env()
 
-genai.configure(api_key="AIzaSyBKrTUvrPoE1G4yeJ220M0fTek0WGEioFU") 
+genai.configure(api_key="AIzaSyDROqc2lTy9M4HJoRNCgZlCU-X7KJv8RXQ") 
 
 def generate_ai_study_plan(student, predictions_data):
     """
@@ -64,3 +65,64 @@ def generate_ai_study_plan(student, predictions_data):
     )
     
     return new_plan
+
+
+
+def generate_career_paths(student, predictions_data):
+    """
+    Feeds holistic student data to Gemini to suggest future career paths.
+    """
+    strong_subject = predictions_data.get('strength_area', 'General Studies')
+    weak_subject = predictions_data.get('recommended_focus', 'None')
+    
+    # Grab the latest soft-skills data
+    latest_behavior = NonAcademicPerformance.objects.filter(student=student).order_by('-uploaded_at').first()
+    
+    leadership = latest_behavior.leadership_skills if latest_behavior else 'Average'
+    communication = latest_behavior.communication_skills if latest_behavior else 'Average'
+    teamwork = latest_behavior.teamwork if latest_behavior else 'Average'
+
+    system_prompt = f"""
+    You are an expert high school career counselor and life coach.
+    Based on the student's academic and behavioral data, suggest 3 highly specific, modern career paths.
+    
+    STUDENT PROFILE:
+    - Academic Strength: {strong_subject}
+    - Academic Weakness: {weak_subject}
+    - Soft Skills: Leadership ({leadership}/5), Communication ({communication}/5), Teamwork ({teamwork}/5).
+    
+    For each career path, explain WHY it fits their profile, and give 2 concrete "Next Steps" they can do right now (e.g., clubs to join, hobbies, basic skills to learn) to explore this interest.
+    
+    OUTPUT FORMAT:
+    Return ONLY clean, semantic HTML using Bootstrap 5 classes. No markdown wrappers.
+    Use this exact structure for each of the 3 careers:
+    <div class="mb-4 border-start border-4 border-success ps-3">
+        <h5 class="fw-bold text-dark">[Career Title]</h5>
+        <p class="text-muted small"><strong>Why it fits:</strong> [Explain connection to their specific subjects and soft skills]</p>
+        <p class="mb-1 fw-bold text-success" style="font-size: 0.85rem;">Actionable Next Steps:</p>
+        <ul class="small text-muted">
+            <li>[Step 1]</li>
+            <li>[Step 2]</li>
+        </ul>
+    </div>
+    """
+
+    model = genai.GenerativeModel('gemini-2.5-flash')
+    response = model.generate_content(system_prompt)
+    generated_html = response.text.strip()
+    
+    # Clean up markdown if accidentally added
+    if generated_html.startswith('```html'):
+        generated_html = generated_html.replace('```html', '', 1)
+    if generated_html.endswith('```'):
+        generated_html = generated_html.rsplit('```', 1)[0]
+    
+    # Deactivate old recommendations and save the new one
+    CareerRecommendation.objects.filter(student=student, is_active=True).update(is_active=False)
+    
+    new_recommendation = CareerRecommendation.objects.create(
+        student=student,
+        recommendation_html=generated_html.strip()
+    )
+    
+    return new_recommendation

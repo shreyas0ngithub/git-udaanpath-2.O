@@ -202,3 +202,13 @@ class StudyPlan(models.Model):
     
     def __str__(self):
         return f"Study Plan for {self.student.roll_number} - {self.generated_date.strftime('%Y-%m-%d')}"
+    
+
+class CareerRecommendation(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='career_recommendations')
+    recommendation_html = models.TextField(help_text="HTML formatted career advice from AI")
+    generated_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Career Paths for {self.student.first_name} ({self.generated_date.strftime('%Y-%m-%d')})"

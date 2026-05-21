@@ -7,6 +7,7 @@ app_name = "parents"
 
 urlpatterns = [
 
-    path('api/student/<int:student_id>/generate-study-plan/', views.generate_study_plan_api, name='generate_study_plan')
+    path('api/student/<int:student_id>/generate-study-plan/', views.generate_study_plan_api, name='generate_study_plan'),
+    path('api/student/<int:student_id>/generate-career/', views.generate_career_api, name='generate_career')
 
 ]
